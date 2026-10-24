@@ -29,13 +29,11 @@ class MockDB:
         ]
 
 
-def get_db() -> MockDB:
-    return MockDB()
+db = MockDB()
 
 
 def list_notebooks(
     sort_by: Literal["id", "subject_name"] | None = None,
-    db: MockDB = Depends(get_db)
     ) -> list[Notebook]:
 
     notebooks = db.get_data()
@@ -44,7 +42,6 @@ def list_notebooks(
         notebooks.sort(key=lambda n: n.id)
     elif sort_by == "subject_name":
         notebooks.sort(key=lambda n: n.subject_name)
-
 
     return notebooks
 
