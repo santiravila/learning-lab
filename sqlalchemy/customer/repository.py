@@ -1,8 +1,8 @@
-from pathlib import Path
-import json
 from .domain import Customer
 from .mappers.customer_mapper import CustomerMapper
 from datetime import datetime
+from pathlib import Path
+import json
 
 file_dir = Path.cwd() / "persistency"
 file_path = file_dir / "customers.json"
@@ -11,6 +11,7 @@ file_path = file_dir / "customers.json"
 class CustomerRepository:
     def __init__(self, customer_file: str | None = None) -> None:
         self.customer_file = file_path if customer_file is None else Path(customer_file)
+   
     def _load(self) -> list[Customer]:
         customers = []
         file_dir.mkdir(parents=True, exist_ok=True)
@@ -19,9 +20,7 @@ class CustomerRepository:
             try:
                 with open(self.customer_file, mode="r") as f:
                     customers_raw = json.load(f)
-                    for customer in customers_raw:
-                        customer = CustomerMapper.json_to_domain(customer)
-                        customers.append(customer)
+                    customers = list(map(CustomerMapper.json_to_domain, customers_raw))
             except json.JSONDecodeError:
                 return []
             return customers
@@ -47,3 +46,12 @@ class CustomerRepository:
         self._save(customers)
 
         return customer
+
+    def get_customer(self, customer_id: int) -> Customer:
+        customers = self._load()
+        
+        for customer in customers:
+            if customer.customer_id == customer_id:
+                return customer
+            
+        raise ValueError(f"No saved customer with id {customer_id}")
