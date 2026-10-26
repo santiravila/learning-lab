@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, ConfigDict
 from datetime import datetime
 
 # base dto shared properties
@@ -12,5 +12,7 @@ class CustomerCreate(CustomerBase):
 
 
 class CustomerResponse(CustomerBase):
-    customer_id: int
+    model_config = ConfigDict(from_attributes=True)
+    id: int
     registered_at: datetime
+        
