@@ -1,4 +1,4 @@
-from .schema import CustomerCreate
+from .schema import CustomerCreate, CustomerUpdate
 from .models import Customer
 from sqlalchemy.orm import Session
 
@@ -6,7 +6,7 @@ class CustomerRepository:
     def __init__(self, session: Session) -> None:
         self.session = session
 
-    def save_customer(self, customer: CustomerCreate) -> Customer:
+    def save_customer(self, customer_payload: CustomerCreate) -> Customer:
         # transient (nothing to do with the db yet)
         db_customer = Customer(
             fullname=customer.fullname,
@@ -19,13 +19,14 @@ class CustomerRepository:
         self.session.refresh(db_customer)
 
         return db_customer
-    """
+    
     def get_customer(self, customer_id: int) -> Customer:
-        customers = self._load()
-        
-        for customer in customers:
-            if customer.customer_id == customer_id:
-                return customer
-            
-        raise ValueError(f"No saved customer with id {customer_id}")
-    """
+        db_customer = self.session.get(Customer, customer_id)
+
+        if not db_customer:
+            raise ValueError(f"No saved customer with id {customer_id}")
+
+        return db_customer
+
+    def update_customer(self, customer_id: int, customer_payload: CustomerUpdate) -> Customer:
+        ...

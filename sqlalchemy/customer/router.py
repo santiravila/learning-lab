@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from typing import Annotated
 from infrastructure.database import get_db_session
 from sqlalchemy.orm import Session
-from .schema import CustomerCreate, CustomerResponse
+from .schema import CustomerCreate, CustomerResponse, CustomerUpdate
 from .repository import CustomerRepository
 
 
@@ -18,20 +18,27 @@ def create_customer(
     db_customer = repo.save_customer(customer_payload)
     return CustomerResponse.model_validate(db_customer)
 
-"""
-@router.get("{customer_id}")
+
+@router.get("{customer_id}", response_model=CustomerResponse)
 def get_customer(
     customer_id: int,
-    repo: Annotated[CustomerRepository, Depends(repository_dependency)]
+    db: Annotated[Session, Depends(get_db_session)]
     ) -> CustomerResponse:
+    repo = CustomerRepository(db)
     try:
         customer = repo.get_customer(customer_id)
-        customer_dto = CustomerMapper.domain_to_dto(customer)
     except ValueError as err:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=str(err)
         )
     else:
-        return customer_dto
-"""
+        return CustomerResponse.model_validate(customer)
+
+@router.patch("{customer_id}", response_model=CustomerResponse)
+def update_customer(
+    customer_id: int,
+    customer_payload: CustomerUpdate,
+    db: Annotated[Session, Depends(get_db_session)],
+) -> CustomerResponse:
+    ...
