@@ -1,28 +1,24 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from .schema import CustomerCreate, CustomerResponse
-from .mappers.customer_mapper import CustomerMapper
-from .repository import CustomerRepository
 from typing import Annotated
-
-def repository_dependency() -> CustomerRepository:
-    repo = CustomerRepository()
-    return repo
+from infrastructure.database import get_db_session
+from sqlalchemy.orm import Session
+from .schema import CustomerCreate, CustomerResponse
+from .repository import CustomerRepository
 
 
 router = APIRouter(prefix="/customers", tags=["customers"])
 
 
-@router.post("")
+@router.post("", response_model=CustomerResponse)
 def create_customer(
     customer_payload: CustomerCreate,
-    repo: Annotated[CustomerRepository, Depends(repository_dependency)]
+    db: Annotated[Session, Depends(get_db_session)]
     ) -> CustomerResponse:
+    repo = CustomerRepository(db)
+    db_customer = repo.save_customer(customer_payload)
+    return CustomerResponse.model_validate(db_customer)
 
-    domain = CustomerMapper.dto_to_domain(customer_payload)
-    domain_answer = repo.save_customer(domain)
-    return CustomerMapper.domain_to_dto(domain_answer)
-
-
+"""
 @router.get("{customer_id}")
 def get_customer(
     customer_id: int,
@@ -38,3 +34,4 @@ def get_customer(
         )
     else:
         return customer_dto
+"""
