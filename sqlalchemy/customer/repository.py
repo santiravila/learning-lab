@@ -9,8 +9,8 @@ class CustomerRepository:
     def save_customer(self, customer_payload: CustomerCreate) -> Customer:
         # transient (nothing to do with the db yet)
         db_customer = Customer(
-            fullname=customer.fullname,
-            email=customer.email
+            fullname=customer_payload.fullname,
+            email=customer_payload.email
         )
 
         # pending (associated with a session, part of a transaction ready to be flushed and persisted in a connection)
@@ -29,4 +29,14 @@ class CustomerRepository:
         return db_customer
 
     def update_customer(self, customer_id: int, customer_payload: CustomerUpdate) -> Customer:
-        ...
+        customer = self.get_customer(customer_id)
+        customer_update_fields = customer_payload.model_dump(exclude_unset=True)
+
+        for key, value in customer_update_fields.items():
+            setattr(customer, key, value)
+
+        self.session.add(customer)
+        self.session.commit()
+        self.session.refresh(customer)
+
+        return customer

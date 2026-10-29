@@ -15,7 +15,7 @@ def create_customer(
     db: Annotated[Session, Depends(get_db_session)]
     ) -> CustomerResponse:
     repo = CustomerRepository(db)
-    db_customer = repo.save_customer(customer_payload)
+    db_customer = repo. save_customer(customer_payload)
     return CustomerResponse.model_validate(db_customer)
 
 
@@ -35,10 +35,14 @@ def get_customer(
     else:
         return CustomerResponse.model_validate(customer)
 
+
 @router.patch("{customer_id}", response_model=CustomerResponse)
 def update_customer(
     customer_id: int,
     customer_payload: CustomerUpdate,
     db: Annotated[Session, Depends(get_db_session)],
 ) -> CustomerResponse:
-    ...
+    repo = CustomerRepository(db)
+    customer = repo.update_customer(customer_id, customer_payload)
+    return CustomerResponse.model_validate(customer)
+

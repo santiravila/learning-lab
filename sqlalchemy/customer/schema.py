@@ -19,10 +19,8 @@ class CustomerResponse(CustomerBase):
 
 
 class CustomerUpdate(CustomerBase):
-    id: Optional[int] = None
     email: Optional[EmailStr] = None
     fullname: Optional[str] = None
-    registered_at: Optional[datetime] = None
 
 
     
