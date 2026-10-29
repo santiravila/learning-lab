@@ -43,6 +43,26 @@ def update_customer(
     db: Annotated[Session, Depends(get_db_session)],
 ) -> CustomerResponse:
     repo = CustomerRepository(db)
-    customer = repo.update_customer(customer_id, customer_payload)
+    try:
+        customer = repo.update_customer(customer_id, customer_payload)
+    except ValueError as e:
+        raise HTTPException(
+            status_code = status.HTTP_404_NOT_FOUND,
+            detail = str(e)
+        )
     return CustomerResponse.model_validate(customer)
 
+@router.delete("{customer_id}", response_model=CustomerResponse)
+def delete_customer(
+    customer_id: int,
+    db: Annotated[Session, Depends(get_db_session)]
+) -> CustomerResponse:
+    repo = CustomerRepository(db)
+    try:
+        customer = repo.delete_customer(customer_id)
+    except ValueError as e:
+        raise HTTPException(
+            status_code = status.HTTP_404_NOT_FOUND,
+            detail = str(e)
+        )
+    return CustomerResponse.model_validate(customer)

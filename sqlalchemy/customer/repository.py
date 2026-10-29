@@ -40,3 +40,9 @@ class CustomerRepository:
         self.session.refresh(customer)
 
         return customer
+
+    def delete_customer(self, customer_id: int) -> Customer:
+        customer = self.get_customer(customer_id)
+        self.session.delete(customer)
+        self.session.commit()
+        return customer

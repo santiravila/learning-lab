@@ -13,7 +13,7 @@ class CustomerCreate(CustomerBase):
 
 
 class CustomerResponse(CustomerBase):
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True) # could ad extra='forbid' for forbidding extra fields
     id: int
     registered_at: datetime
 
