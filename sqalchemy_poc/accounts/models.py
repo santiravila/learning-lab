@@ -1,6 +1,5 @@
 from infrastructure.database import Base
-from customers.models import Customer
-from sqlalchemy import String, DateTime, Enum as SQLEnum
+from sqlalchemy import DateTime, Enum as SQLEnum, ForeignKey
 from datetime import datetime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from enum import Enum
@@ -19,6 +18,8 @@ class Account(Base):
     )
     balance: Mapped[float] = mapped_column()
     password: Mapped[str] = mapped_column()
-    created_at: Mapped[datetime] = mapped_column(DateTime)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
 
-    customer: Mapped[Customer] = relationship(back_populates="accounts")
+    customer_id: Mapped[int] = mapped_column(ForeignKey("customer.id"))
+
+    customer: Mapped["Customer"] = relationship(back_populates="accounts")

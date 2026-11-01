@@ -15,7 +15,7 @@ def create_customer(
     db: Annotated[Session, Depends(get_db_session)]
     ) -> CustomerResponse:
     repo = CustomerRepository(db)
-    db_customer = repo. save_customer(customer_payload)
+    db_customer = repo.save_customer(customer_payload)
     return CustomerResponse.model_validate(db_customer)
 
 
