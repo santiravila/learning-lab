@@ -20,6 +20,9 @@ class Account(Base):
     password: Mapped[str] = mapped_column()
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
 
-    customer_id: Mapped[int] = mapped_column(ForeignKey("customer.id"))
+    customer_id: Mapped[int] = mapped_column(ForeignKey("customers.id"))
 
     customer: Mapped["Customer"] = relationship(back_populates="accounts")
+
+    def __repr__(self):
+        return f"id:{self.id}, accounttype:{self.account_type}, balance: {self.balance}, password: {self.password}, created_at: {self.created_at}, customer_id:{self.customer_id}"

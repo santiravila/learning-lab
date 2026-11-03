@@ -1,11 +1,11 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from accounts.models import AccountType
 from datetime import datetime
 
 
 class AccountBase(BaseModel):
     account_type: AccountType
-    balance: int
+    balance: float
     password: str
     customer_id: int
 
@@ -15,5 +15,6 @@ class AccountCreate(AccountBase):
 
 
 class AccountResponse(AccountBase):
+    model_config = ConfigDict(from_attributes=True)
     id: int
     created_at: datetime

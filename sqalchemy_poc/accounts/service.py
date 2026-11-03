@@ -11,7 +11,7 @@ class AccountService:
         account_repo: AccountRepository    
     ):
         self.customer_repo = customer_repo
-        self.account.repo = account_repo
+        self.account_repo = account_repo
 
     def add_account(self, account_payload: AccountCreate) -> Account:
         # check a customer with customer_id exists. get_customer validates automatically
@@ -26,7 +26,13 @@ class AccountService:
             customer=customer
         )
 
-        return self.account_repo.save(new_account)
+        db_account = self.account_repo.save_account(new_account)
+        print(db_account.__repr__())
+        return db_account
+
+    def find_account(self, account_id: int):
+        db_account = self.account_repo.load_account(account_id)
+        return db_account
 
 
         

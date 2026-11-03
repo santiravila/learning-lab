@@ -7,8 +7,17 @@ class AccountRepository:
         self.session = session
 
     def save_account(self, account: Account) -> Account:
-        self.session.save(account)
+        
+        self.session.add(account)
         self.session.commit()
-        self.refresh(account)
+        self.session.refresh(account)
 
         return account  
+
+    def load_account(self, account_id: int):
+        account = self.session.get(Account, account_id)
+
+        if not account:
+            raise ValueError("No account persisted with id {account_id}")
+
+        return account
