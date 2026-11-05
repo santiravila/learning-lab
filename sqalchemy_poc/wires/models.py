@@ -6,5 +6,5 @@ class Wire(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     amount: Mapped[float] #redundant? think about it
-    # this class decides the amount of each transaction, its type and both 
-    # have the same timestamp?
+
+    transfers: Mapped[list["Transfer"]] = relationship(back_populates="transfers")

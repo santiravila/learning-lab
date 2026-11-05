@@ -1,11 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from infrastructure.database import get_db_session
 from typing import Annotated
-from sqlalchemy.orm import Session
 from customers.repository import CustomerRepository
 from .schema import AccountCreate, AccountResponse
 from .repository import AccountRepository
 from .service import AccountService
+from common.dependencies import DBSession
 
 
 router = APIRouter(
@@ -13,7 +12,6 @@ router = APIRouter(
     tags=["accounts"]
 )
 
-DBSession = Annotated[Session, Depends(get_db_session)]
 def get_service_dependency(db: DBSession):
     customer_repo = CustomerRepository(db)
     account_repo = AccountRepository(db)
