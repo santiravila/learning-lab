@@ -1,5 +1,6 @@
 from fastapi import FastAPI
-from infrastructure.database import Base, engine
+from infrastructure.database import engine, Base
+from infrastructure import models
 from customers.router import router as customers_router
 from accounts.router import router as accounts_router
 from transfers.router import router as transfers_router
